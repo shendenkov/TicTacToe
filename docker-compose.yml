@@ -1,0 +1,15 @@
+version: '1'
+
+services:
+  engine-service:
+    build: engine
+  session-service:
+    build: session
+    depends_on:
+      - engine-service
+  ui-service:
+    build: ui
+    depends_on:
+      - session-service
+    ports:
+      - "8080:80"
