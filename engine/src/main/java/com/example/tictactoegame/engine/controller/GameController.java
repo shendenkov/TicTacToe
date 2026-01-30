@@ -1,8 +1,8 @@
 package com.example.tictactoegame.engine.controller;
 
-import com.example.tictactoegame.engine.model.GameDTO;
+import com.example.tictactoegame.engine.dto.GameDTO;
 import com.example.tictactoegame.engine.model.GameStatus;
-import com.example.tictactoegame.engine.model.MoveDTO;
+import com.example.tictactoegame.engine.dto.MoveDTO;
 import com.example.tictactoegame.engine.service.GameService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

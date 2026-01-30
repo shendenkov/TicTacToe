@@ -1,5 +1,6 @@
-package com.example.tictactoegame.engine.model;
+package com.example.tictactoegame.engine.dto;
 
+import com.example.tictactoegame.engine.model.Player;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

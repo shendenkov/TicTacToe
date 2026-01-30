@@ -1,9 +1,9 @@
 package com.example.tictactoegame.session.external;
 
 import com.example.tictactoegame.session.exception.ServiceUnavailableException;
-import com.example.tictactoegame.session.model.GameDTO;
+import com.example.tictactoegame.session.dto.GameDTO;
 import com.example.tictactoegame.session.model.GameStatus;
-import com.example.tictactoegame.session.model.MoveDTO;
+import com.example.tictactoegame.session.dto.MoveDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;

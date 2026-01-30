@@ -1,4 +1,4 @@
-package com.example.tictactoegame.session.configuration;
+package com.example.tictactoegame.session.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

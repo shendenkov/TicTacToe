@@ -1,5 +1,7 @@
-package com.example.tictactoegame.session.model;
+package com.example.tictactoegame.session.dto;
 
+import com.example.tictactoegame.session.model.MoveEntity;
+import com.example.tictactoegame.session.model.Player;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 

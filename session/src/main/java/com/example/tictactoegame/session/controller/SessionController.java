@@ -1,6 +1,6 @@
 package com.example.tictactoegame.session.controller;
 
-import com.example.tictactoegame.session.model.SessionDTO;
+import com.example.tictactoegame.session.dto.SessionDTO;
 import com.example.tictactoegame.session.service.SessionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

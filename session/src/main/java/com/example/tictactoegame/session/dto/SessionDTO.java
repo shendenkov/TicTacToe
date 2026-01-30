@@ -1,5 +1,6 @@
-package com.example.tictactoegame.session.model;
+package com.example.tictactoegame.session.dto;
 
+import com.example.tictactoegame.session.model.SessionEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;

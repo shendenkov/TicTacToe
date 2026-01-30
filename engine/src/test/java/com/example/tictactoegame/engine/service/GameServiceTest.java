@@ -1,5 +1,7 @@
 package com.example.tictactoegame.engine.service;
 
+import com.example.tictactoegame.engine.dto.GameDTO;
+import com.example.tictactoegame.engine.dto.MoveDTO;
 import com.example.tictactoegame.engine.exception.ConflictException;
 import com.example.tictactoegame.engine.exception.NotFoundException;
 import com.example.tictactoegame.engine.model.*;

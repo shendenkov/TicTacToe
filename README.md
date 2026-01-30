@@ -5,8 +5,8 @@ This is the Demo game project. It includes 3 microservices:
 - "session-service" for managing game sessions and game simulation, depends on engine-service
 - "engine-service" for managing game state
 
-You can use only Maven for unit-testing, building and running. For this you need use following commands from section Maven. And then, just 
-open index.html file in browser.
+You can use only Maven for unit-testing, building and running. For this, you need to use the following commands from section Maven. And 
+then, just open the index.html file in the browser.
 
 You can use Docker to pack services to images, run them in containers, open browser and use.
 

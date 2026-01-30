@@ -1,5 +1,7 @@
 package com.example.tictactoegame.session.service;
 
+import com.example.tictactoegame.session.dto.GameDTO;
+import com.example.tictactoegame.session.dto.MoveDTO;
 import com.example.tictactoegame.session.external.GameEngineGateway;
 import com.example.tictactoegame.session.model.*;
 import lombok.Getter;

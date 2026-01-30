@@ -1,5 +1,7 @@
 package com.example.tictactoegame.session.service;
 
+import com.example.tictactoegame.session.dto.GameDTO;
+import com.example.tictactoegame.session.dto.SessionDTO;
 import com.example.tictactoegame.session.exception.ServiceUnavailableException;
 import com.example.tictactoegame.session.external.GameEngineGateway;
 import com.example.tictactoegame.session.model.*;
