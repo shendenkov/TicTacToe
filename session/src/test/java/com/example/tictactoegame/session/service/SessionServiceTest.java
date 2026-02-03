@@ -15,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.scheduling.TaskScheduler;
 
 import java.util.Collections;
@@ -35,17 +36,20 @@ public class SessionServiceTest {
   private MoveRepository moveRepository;
 
   @Mock
-  private TaskScheduler taskScheduler;
+  private GameEngineGateway gameEngineGateway;
 
   @Mock
-  private GameEngineGateway gameEngineGateway;
+  private ObjectProvider<GameSimulation> simulationProvider;
+
+  @Mock
+  private TaskScheduler taskScheduler;
 
   @InjectMocks
   private SessionService sessionService;
 
   @BeforeEach
   void setUp() {
-    reset(sessionRepository, moveRepository, taskScheduler, gameEngineGateway);
+    reset(sessionRepository, moveRepository, gameEngineGateway, simulationProvider, taskScheduler);
   }
 
   @Test
@@ -113,15 +117,16 @@ public class SessionServiceTest {
       .setId(sessionId);
     GameDTO mockGame = new GameDTO(sessionId, "_________", GameStatus.IN_PROGRESS);
     when(sessionRepository.findById(sessionId)).thenReturn(Optional.of(mockSession));
+    when(simulationProvider.getObject()).thenReturn(new GameSimulationRandom(sessionService, gameEngineGateway));
     when(gameEngineGateway.getCurrentGameState(sessionId)).thenReturn(mockGame);
     when(gameEngineGateway.makeMove(eq(sessionId), any())).thenReturn(GameStatus.IN_PROGRESS);
 
     sessionService.startGame(sessionId);
 
-    ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
+    ArgumentCaptor<GameSimulation> runnableCaptor = ArgumentCaptor.forClass(GameSimulation.class);
     verify(taskScheduler).scheduleWithFixedDelay(runnableCaptor.capture(), any());
 
-    GameSimulation gameSimulation = (GameSimulation) runnableCaptor.getValue();
+    GameSimulation gameSimulation = runnableCaptor.getValue();
     gameSimulation.run();
 
     assertEquals(GameStatus.IN_PROGRESS, gameSimulation.getStatus());
@@ -135,16 +140,17 @@ public class SessionServiceTest {
       .setId(sessionId);
     GameDTO mockGame = new GameDTO(sessionId, "XX_OO____", GameStatus.IN_PROGRESS);
     when(sessionRepository.findById(sessionId)).thenReturn(Optional.of(mockSession));
+    when(simulationProvider.getObject()).thenReturn(new GameSimulationRandom(sessionService, gameEngineGateway));
     when(taskScheduler.scheduleWithFixedDelay(any(), any())).thenReturn(Mockito.mock(ScheduledFuture.class));
     when(gameEngineGateway.getCurrentGameState(sessionId)).thenReturn(mockGame);
     when(gameEngineGateway.makeMove(eq(sessionId), any())).thenReturn(GameStatus.WIN);
 
     sessionService.startGame(sessionId);
 
-    ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
+    ArgumentCaptor<GameSimulation> runnableCaptor = ArgumentCaptor.forClass(GameSimulation.class);
     verify(taskScheduler).scheduleWithFixedDelay(runnableCaptor.capture(), any());
 
-    GameSimulation gameSimulation = (GameSimulation) runnableCaptor.getValue();
+    GameSimulation gameSimulation = runnableCaptor.getValue();
     gameSimulation.run();
 
     assertEquals(GameStatus.WIN, gameSimulation.getStatus());
@@ -158,16 +164,17 @@ public class SessionServiceTest {
       .setId(sessionId);
     GameDTO mockGame = new GameDTO(sessionId, "XXOOOXXO_", GameStatus.IN_PROGRESS);
     when(sessionRepository.findById(sessionId)).thenReturn(Optional.of(mockSession));
+    when(simulationProvider.getObject()).thenReturn(new GameSimulationRandom(sessionService, gameEngineGateway));
     when(taskScheduler.scheduleWithFixedDelay(any(), any())).thenReturn(Mockito.mock(ScheduledFuture.class));
     when(gameEngineGateway.getCurrentGameState(sessionId)).thenReturn(mockGame);
     when(gameEngineGateway.makeMove(eq(sessionId), any())).thenReturn(GameStatus.DRAW);
 
     sessionService.startGame(sessionId);
 
-    ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
+    ArgumentCaptor<GameSimulation> runnableCaptor = ArgumentCaptor.forClass(GameSimulation.class);
     verify(taskScheduler).scheduleWithFixedDelay(runnableCaptor.capture(), any());
 
-    GameSimulation gameSimulation = (GameSimulation) runnableCaptor.getValue();
+    GameSimulation gameSimulation = runnableCaptor.getValue();
     gameSimulation.run();
 
     assertEquals(GameStatus.DRAW, gameSimulation.getStatus());

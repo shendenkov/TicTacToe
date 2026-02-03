@@ -3,16 +3,26 @@ version: '1'
 services:
   engine-service:
     build: engine
+    networks:
+      - backend
   session-service:
     build: session
+    networks:
+      - frontend
+      - backend
     depends_on:
       - engine-service
   ui-service:
     build: ui
-    depends_on:
-      - session-service
+    networks:
+      - frontend
     ports:
       - "8080:80"
+    depends_on:
+      - session-service
 
 networks:
-  ttt-network:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge

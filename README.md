@@ -67,21 +67,27 @@ Use `ctrl-c` to stop session service and then the same to stop engine service.
 `docker build ui/. -t ttt/ui-service`
 
 ### Run
-- Create private network:
+- Create private networks:
 
-`docker network create ttt-network`
+`docker network create frontend`
+
+`docker network create backend`
 
 - Run engine service container:
 
-`docker run -d --name engine-service --network ttt-network ttt/engine-service`
+`docker run -d --name engine-service --network backend ttt/engine-service`
 
 - Run session service container:
 
-`docker run -d --name session-service --network ttt-network ttt/session-service`
+`docker run -d --name session-service --network frontend ttt/session-service`
+
+- Add additional network for session service container:
+
+`docker network connect backend session-service`
 
 - Run ui service container:
 
-`docker run -d -p 8080:80 --name ui-service --network ttt-network ttt/ui-service`
+`docker run -d -p 8080:80 --name ui-service --network frontend ttt/ui-service`
 
 - Open browser and type:
 
@@ -96,7 +102,9 @@ Use next commands to stop:
 
 `docker stop engine-service`
 
-`docker network rm ttt-network`
+`docker network rm frontend`
+
+`docker network rm backend`
 
 If you need remove all stopped containers also, then use command:
 

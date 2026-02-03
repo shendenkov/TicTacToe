@@ -5,9 +5,11 @@ import com.example.tictactoegame.session.dto.MoveDTO;
 import com.example.tictactoegame.session.dto.SessionDTO;
 import com.example.tictactoegame.session.exception.NotFoundException;
 import com.example.tictactoegame.session.external.GameEngineGateway;
-import com.example.tictactoegame.session.model.*;
+import com.example.tictactoegame.session.model.MoveEntity;
+import com.example.tictactoegame.session.model.SessionEntity;
 import com.example.tictactoegame.session.repository.MoveRepository;
 import com.example.tictactoegame.session.repository.SessionRepository;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
@@ -21,19 +23,20 @@ public class SessionService {
 
   private final SessionRepository sessionRepository;
   private final MoveRepository moveRepository;
-
-  private final TaskScheduler taskScheduler;
   private final GameEngineGateway gameEngineGateway;
+  private final ObjectProvider<GameSimulation> simulationProvider;
+  private final TaskScheduler taskScheduler;
 
-  @Value("${app.player.sleep-interval}")
+  @Value("${app.simulation.sleep-interval}")
   private long playerSleepInterval;
 
-  public SessionService(SessionRepository sessionRepository, MoveRepository moveRepository, TaskScheduler taskScheduler,
-                        GameEngineGateway gameEngineGateway) {
+  public SessionService(SessionRepository sessionRepository, MoveRepository moveRepository, GameEngineGateway gameEngineGateway,
+                        ObjectProvider<GameSimulation> simulationProvider, TaskScheduler taskScheduler) {
     this.sessionRepository = sessionRepository;
     this.moveRepository = moveRepository;
-    this.taskScheduler = taskScheduler;
     this.gameEngineGateway = gameEngineGateway;
+    this.simulationProvider = simulationProvider;
+    this.taskScheduler = taskScheduler;
   }
 
   @Transactional
@@ -71,9 +74,11 @@ public class SessionService {
   }
 
   protected void startGameSimulation(SessionEntity session) {
-    GameSimulation task = new GameSimulation(this, gameEngineGateway, session);
-    ScheduledFuture<?> future = taskScheduler.scheduleWithFixedDelay(task, Duration.ofMillis(playerSleepInterval));
-    task.setThisTask(future);
+    GameSimulation gameSimulation = simulationProvider.getObject();
+    gameSimulation.setSession(session);
+
+    ScheduledFuture<?> future = taskScheduler.scheduleWithFixedDelay(gameSimulation, Duration.ofMillis(playerSleepInterval));
+    gameSimulation.setThisTask(future);
   }
 
   @Transactional
