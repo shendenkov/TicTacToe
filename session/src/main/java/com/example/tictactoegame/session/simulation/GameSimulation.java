@@ -1,4 +1,4 @@
-package com.example.tictactoegame.session.service;
+package com.example.tictactoegame.session.simulation;
 
 import com.example.tictactoegame.session.model.GameStatus;
 import com.example.tictactoegame.session.model.SessionEntity;

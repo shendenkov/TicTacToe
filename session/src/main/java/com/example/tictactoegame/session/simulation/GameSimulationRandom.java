@@ -1,21 +1,29 @@
-package com.example.tictactoegame.session.service;
+package com.example.tictactoegame.session.simulation;
 
-import com.example.tictactoegame.session.dto.GameDTO;
-import com.example.tictactoegame.session.dto.MoveDTO;
+import com.example.tictactoegame.session.dto.GameDto;
+import com.example.tictactoegame.session.dto.MoveDto;
+import com.example.tictactoegame.session.dto.SessionDto;
 import com.example.tictactoegame.session.external.GameEngineGateway;
-import com.example.tictactoegame.session.model.*;
+import com.example.tictactoegame.session.model.GameStatus;
+import com.example.tictactoegame.session.model.Player;
+import com.example.tictactoegame.session.model.SessionEntity;
+import com.example.tictactoegame.session.service.GameEventPublisher;
+import com.example.tictactoegame.session.service.SessionService;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ThreadLocalRandom;
 
+@RequiredArgsConstructor
 public class GameSimulationRandom implements GameSimulation {
 
   public static char EMPTY_CELL = '_';
 
   private final SessionService sessionService;
   private final GameEngineGateway gameEngineGateway;
+  private final GameEventPublisher gameEventPublisher;
 
   @Setter
   private SessionEntity session;
@@ -27,14 +35,9 @@ public class GameSimulationRandom implements GameSimulation {
   private GameStatus status;
   private Player player = Player.X;
 
-  public GameSimulationRandom(SessionService sessionService, GameEngineGateway gameEngineGateway) {
-    this.sessionService = sessionService;
-    this.gameEngineGateway = gameEngineGateway;
-  }
-
   @Override
   public void run() {
-    GameDTO game = gameEngineGateway.getCurrentGameState(session.getId());
+    GameDto game = gameEngineGateway.getCurrentGameState(session.getId());
     status = game.getStatus();
     if (GameStatus.isFinished(status)) {
       thisTask.cancel(false);
@@ -46,9 +49,12 @@ public class GameSimulationRandom implements GameSimulation {
       position = ThreadLocalRandom.current().nextInt(9);
     }
 
-    MoveDTO move = new MoveDTO(player, position);
+    MoveDto move = new MoveDto(player, position);
     status = gameEngineGateway.makeMove(game.getGameId(), move);
     sessionService.saveMove(session, move);
+
+    game = gameEngineGateway.getCurrentGameState(session.getId());
+    gameEventPublisher.publish(String.valueOf(session.getId()), SessionDto.from(session, game));
 
     if (GameStatus.isFinished(status)) {
       thisTask.cancel(false);

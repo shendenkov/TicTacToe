@@ -32,5 +32,7 @@ build/
 ### VS Code ###
 .vscode/
 
+.env.local
+.env.test
 engine/src/main/resources/application-local.properties
 session/src/main/resources/application-local.properties

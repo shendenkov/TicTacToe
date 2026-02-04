@@ -1,10 +1,12 @@
 package com.example.tictactoegame.engine.service;
 
-import com.example.tictactoegame.engine.dto.GameDTO;
-import com.example.tictactoegame.engine.dto.MoveDTO;
+import com.example.tictactoegame.engine.dto.GameDto;
+import com.example.tictactoegame.engine.dto.MoveDto;
 import com.example.tictactoegame.engine.exception.ConflictException;
 import com.example.tictactoegame.engine.exception.NotFoundException;
-import com.example.tictactoegame.engine.model.*;
+import com.example.tictactoegame.engine.model.GameEntity;
+import com.example.tictactoegame.engine.model.GameStatus;
+import com.example.tictactoegame.engine.model.Player;
 import com.example.tictactoegame.engine.repository.GameRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +29,7 @@ public class GameService {
   }
 
   @Transactional
-  public GameDTO createGame(long id) {
+  public GameDto createGame(long id) {
     if (id <= 0) {
       throw new IllegalArgumentException("Game id can not be zero or negative");
     }
@@ -37,17 +39,17 @@ public class GameService {
       });
 
     GameEntity game = repository.save(new GameEntity(id));
-    return new GameDTO(game);
+    return GameDto.from(game);
   }
 
   @Transactional(readOnly = true)
-  public GameDTO getGame(long id) {
+  public GameDto getGame(long id) {
     GameEntity game = getGameEntity(id);
-    return new GameDTO(game);
+    return GameDto.from(game);
   }
 
   @Transactional
-  public GameStatus makeMove(long id, MoveDTO move) {
+  public GameStatus makeMove(long id, MoveDto move) {
     GameEntity game = getGameEntity(id);
 
     validateGame(game);
@@ -72,7 +74,7 @@ public class GameService {
     }
   }
 
-  private void validateMove(GameEntity game, MoveDTO move) {
+  private void validateMove(GameEntity game, MoveDto move) {
     if (move.getSymbol() != game.getCurrentTurn()) {
       throw new IllegalArgumentException("Wrong player turn");
     }
@@ -81,7 +83,7 @@ public class GameService {
     }
   }
 
-  private void changeState(GameEntity game, MoveDTO move) {
+  private void changeState(GameEntity game, MoveDto move) {
     StringBuilder stringBuilder = new StringBuilder(game.getState());
     stringBuilder.setCharAt(move.getPosition(), move.getSymbol().getSymbol());
     game.setState(stringBuilder.toString());

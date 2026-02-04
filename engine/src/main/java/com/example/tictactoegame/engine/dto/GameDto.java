@@ -6,18 +6,17 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 @Getter
 @EqualsAndHashCode
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GameDTO {
+public class GameDto {
 
   private long gameId;
   private String state;
   private GameStatus status;
 
-  public GameDTO(GameEntity game) {
-    this.gameId = game.getId();
-    this.state = game.getState();
-    this.status = game.getStatus();
+  public static GameDto from(GameEntity game) {
+    return new GameDto(game.getId(), game.getState(), game.getStatus());
   }
 }

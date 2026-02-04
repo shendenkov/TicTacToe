@@ -1,14 +1,16 @@
 package com.example.tictactoegame.session.service;
 
-import com.example.tictactoegame.session.dto.GameDTO;
-import com.example.tictactoegame.session.dto.MoveDTO;
-import com.example.tictactoegame.session.dto.SessionDTO;
+import com.example.tictactoegame.session.dto.GameDto;
+import com.example.tictactoegame.session.dto.MoveDto;
+import com.example.tictactoegame.session.dto.SessionDto;
 import com.example.tictactoegame.session.exception.NotFoundException;
 import com.example.tictactoegame.session.external.GameEngineGateway;
 import com.example.tictactoegame.session.model.MoveEntity;
 import com.example.tictactoegame.session.model.SessionEntity;
 import com.example.tictactoegame.session.repository.MoveRepository;
 import com.example.tictactoegame.session.repository.SessionRepository;
+import com.example.tictactoegame.session.simulation.GameSimulation;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.TaskScheduler;
@@ -19,6 +21,7 @@ import java.time.Duration;
 import java.util.concurrent.ScheduledFuture;
 
 @Service
+@RequiredArgsConstructor
 public class SessionService {
 
   private final SessionRepository sessionRepository;
@@ -30,31 +33,22 @@ public class SessionService {
   @Value("${app.simulation.sleep-interval}")
   private long playerSleepInterval;
 
-  public SessionService(SessionRepository sessionRepository, MoveRepository moveRepository, GameEngineGateway gameEngineGateway,
-                        ObjectProvider<GameSimulation> simulationProvider, TaskScheduler taskScheduler) {
-    this.sessionRepository = sessionRepository;
-    this.moveRepository = moveRepository;
-    this.gameEngineGateway = gameEngineGateway;
-    this.simulationProvider = simulationProvider;
-    this.taskScheduler = taskScheduler;
-  }
-
   @Transactional
-  public SessionDTO createSession() {
+  public SessionDto createSession() {
     SessionEntity session = sessionRepository.save(new SessionEntity());
 
-    GameDTO game = gameEngineGateway.createNewGame(session.getId());
+    GameDto game = gameEngineGateway.createNewGame(session.getId());
 
-    return new SessionDTO(session, game);
+    return SessionDto.from(session, game);
   }
 
   @Transactional(readOnly = true)
-  public SessionDTO getSession(long id) {
+  public SessionDto getSession(long id) {
     SessionEntity session = getSessionEntity(id);
 
-    GameDTO game = gameEngineGateway.getCurrentGameState(id);
+    GameDto game = gameEngineGateway.getCurrentGameState(id);
 
-    return new SessionDTO(session, game);
+    return SessionDto.from(session, game);
   }
 
   @Transactional(readOnly = true)
@@ -82,7 +76,7 @@ public class SessionService {
   }
 
   @Transactional
-  protected void saveMove(SessionEntity session, MoveDTO move) {
+  public void saveMove(SessionEntity session, MoveDto move) {
     moveRepository.save(new MoveEntity(session, move.getSymbol(), move.getPosition()));
   }
 }

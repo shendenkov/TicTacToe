@@ -124,3 +124,11 @@ If you need remove all stopped containers also, then use command:
 Use next commands to stop and remove containers:
 
 `docker-compose down`
+
+TODO:
+- add SpringCloudConfig server service
+- add SpringCloudGateway service
+- add Eureka discovery service
+- add SpringCloud OpenFeign to change hardcoded internal urls
+- add application stop hooks
+- add log4j logging

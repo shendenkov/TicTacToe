@@ -1,9 +1,9 @@
 package com.example.tictactoegame.session.external;
 
 import com.example.tictactoegame.session.exception.ServiceUnavailableException;
-import com.example.tictactoegame.session.dto.GameDTO;
+import com.example.tictactoegame.session.dto.GameDto;
 import com.example.tictactoegame.session.model.GameStatus;
-import com.example.tictactoegame.session.dto.MoveDTO;
+import com.example.tictactoegame.session.dto.MoveDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
@@ -25,11 +25,11 @@ public class GameEngineHttpGateway implements GameEngineGateway {
   private String engineServiceHost;
 
   @Override
-  public GameDTO createNewGame(long id) {
-    ResponseEntity<GameDTO> response = restClient.post()
+  public GameDto createNewGame(long id) {
+    ResponseEntity<GameDto> response = restClient.post()
       .uri("http://" + engineServiceHost + "/games/" + id)
       .retrieve()
-      .toEntity(GameDTO.class);
+      .toEntity(GameDto.class);
 
     if (response.getStatusCode().isError()) {
       System.out.println("Engine service error: " + response);
@@ -40,11 +40,11 @@ public class GameEngineHttpGateway implements GameEngineGateway {
   }
 
   @Override
-  public GameDTO getCurrentGameState(long id) {
-    ResponseEntity<GameDTO> response = restClient.get()
+  public GameDto getCurrentGameState(long id) {
+    ResponseEntity<GameDto> response = restClient.get()
       .uri("http://" + engineServiceHost + "/games/" + id)
       .retrieve()
-      .toEntity(GameDTO.class);
+      .toEntity(GameDto.class);
 
     if (response.getStatusCode().isError()) {
       System.out.println("Engine service error: " + response);
@@ -55,7 +55,7 @@ public class GameEngineHttpGateway implements GameEngineGateway {
   }
 
   @Override
-  public GameStatus makeMove(long id, MoveDTO move) {
+  public GameStatus makeMove(long id, MoveDto move) {
     ResponseEntity<GameStatus> response = restClient.post()
       .uri("http://" + engineServiceHost + "/games/" + id + "/move")
       .contentType(MediaType.APPLICATION_JSON)

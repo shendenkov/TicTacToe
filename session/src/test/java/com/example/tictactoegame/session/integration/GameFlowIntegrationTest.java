@@ -1,11 +1,9 @@
 package com.example.tictactoegame.session.integration;
 
 import com.example.tictactoegame.session.model.GameStatus;
-import com.example.tictactoegame.session.dto.SessionDTO;
-import org.junit.jupiter.api.Test;
+import com.example.tictactoegame.session.dto.SessionDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.TestRestTemplate;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +12,6 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.images.builder.ImageFromDockerfile;
 import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.nio.file.Path;
 
@@ -47,7 +44,7 @@ public class GameFlowIntegrationTest {
 
   //@Test
   void fullGameFlow() {
-    ResponseEntity<SessionDTO> sessionResponse = rest.postForEntity("/sessions", HttpEntity.EMPTY, SessionDTO.class);
+    ResponseEntity<SessionDto> sessionResponse = rest.postForEntity("/sessions", HttpEntity.EMPTY, SessionDto.class);
 
     assertEquals(HttpStatus.OK, sessionResponse.getStatusCode());
     assertNotNull(sessionResponse.getBody());
@@ -60,7 +57,7 @@ public class GameFlowIntegrationTest {
 
     GameStatus status = sessionResponse.getBody().getGame().getStatus();
     while (status == GameStatus.IN_PROGRESS) {
-      sessionResponse = rest.getForEntity("/sessions/" + sessionId, SessionDTO.class);
+      sessionResponse = rest.getForEntity("/sessions/" + sessionId, SessionDto.class);
 
       assertEquals(HttpStatus.OK, sessionResponse.getStatusCode());
       assertNotNull(sessionResponse.getBody());

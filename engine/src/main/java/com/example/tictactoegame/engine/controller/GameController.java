@@ -1,8 +1,8 @@
 package com.example.tictactoegame.engine.controller;
 
-import com.example.tictactoegame.engine.dto.GameDTO;
+import com.example.tictactoegame.engine.dto.GameDto;
 import com.example.tictactoegame.engine.model.GameStatus;
-import com.example.tictactoegame.engine.dto.MoveDTO;
+import com.example.tictactoegame.engine.dto.MoveDto;
 import com.example.tictactoegame.engine.service.GameService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -30,12 +30,12 @@ public class GameController {
   )
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200", description = "Processed successfully",
-      content = {@Content(mediaType = "application/json", schema = @Schema(implementation = GameDTO.class))}),
+      content = {@Content(mediaType = "application/json", schema = @Schema(implementation = GameDto.class))}),
     @ApiResponse(responseCode = "400", description = "Create failed", content = @Content),
     @ApiResponse(responseCode = "409", description = "Game already exists", content = @Content)
   })
   public ResponseEntity<Object> createGame(@PathVariable("gameId") long id) {
-    GameDTO game = gameService.createGame(id);
+    GameDto game = gameService.createGame(id);
     return ResponseEntity.ok(game);
   }
 
@@ -50,7 +50,7 @@ public class GameController {
     @ApiResponse(responseCode = "400", description = "Move failed", content = @Content),
     @ApiResponse(responseCode = "404", description = "Game not found", content = @Content)
   })
-  public ResponseEntity<Object> makeMove(@PathVariable("gameId") long id, @RequestBody @Valid MoveDTO move) {
+  public ResponseEntity<Object> makeMove(@PathVariable("gameId") long id, @RequestBody @Valid MoveDto move) {
     GameStatus status = gameService.makeMove(id, move);
     return ResponseEntity.ok(status);
   }
@@ -62,11 +62,11 @@ public class GameController {
   )
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200", description = "Processed successfully",
-      content = {@Content(mediaType = "application/json", schema = @Schema(implementation = GameDTO.class))}),
+      content = {@Content(mediaType = "application/json", schema = @Schema(implementation = GameDto.class))}),
     @ApiResponse(responseCode = "404", description = "Game not found", content = @Content)
   })
   public ResponseEntity<Object> getGame(@PathVariable("gameId") long id) {
-    GameDTO game = gameService.getGame(id);
+    GameDto game = gameService.getGame(id);
     return ResponseEntity.ok(game);
   }
 }

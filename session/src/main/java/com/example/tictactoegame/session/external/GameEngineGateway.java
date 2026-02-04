@@ -1,12 +1,12 @@
 package com.example.tictactoegame.session.external;
 
-import com.example.tictactoegame.session.dto.GameDTO;
+import com.example.tictactoegame.session.dto.GameDto;
 import com.example.tictactoegame.session.model.GameStatus;
-import com.example.tictactoegame.session.dto.MoveDTO;
+import com.example.tictactoegame.session.dto.MoveDto;
 
 public interface GameEngineGateway {
 
-  GameDTO createNewGame(long id);
-  GameDTO getCurrentGameState(long id);
-  GameStatus makeMove(long id, MoveDTO move);
+  GameDto createNewGame(long id);
+  GameDto getCurrentGameState(long id);
+  GameStatus makeMove(long id, MoveDto move);
 }

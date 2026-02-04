@@ -1,12 +1,14 @@
 package com.example.tictactoegame.session.service;
 
-import com.example.tictactoegame.session.dto.GameDTO;
-import com.example.tictactoegame.session.dto.SessionDTO;
+import com.example.tictactoegame.session.dto.GameDto;
+import com.example.tictactoegame.session.dto.SessionDto;
 import com.example.tictactoegame.session.exception.ServiceUnavailableException;
 import com.example.tictactoegame.session.external.GameEngineGateway;
 import com.example.tictactoegame.session.model.*;
 import com.example.tictactoegame.session.repository.MoveRepository;
 import com.example.tictactoegame.session.repository.SessionRepository;
+import com.example.tictactoegame.session.simulation.GameSimulation;
+import com.example.tictactoegame.session.simulation.GameSimulationRandom;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,6 +41,9 @@ public class SessionServiceTest {
   private GameEngineGateway gameEngineGateway;
 
   @Mock
+  private GameEventPublisher gameEventPublisher;
+
+  @Mock
   private ObjectProvider<GameSimulation> simulationProvider;
 
   @Mock
@@ -49,7 +54,7 @@ public class SessionServiceTest {
 
   @BeforeEach
   void setUp() {
-    reset(sessionRepository, moveRepository, gameEngineGateway, simulationProvider, taskScheduler);
+    reset(sessionRepository, moveRepository, gameEngineGateway, gameEventPublisher, simulationProvider, taskScheduler);
   }
 
   @Test
@@ -57,11 +62,11 @@ public class SessionServiceTest {
     long sessionId = 1;
     SessionEntity mockSession = new SessionEntity()
       .setId(sessionId);
-    GameDTO mockGame = new GameDTO(sessionId, "_________", GameStatus.IN_PROGRESS);
+    GameDto mockGame = new GameDto(sessionId, "_________", GameStatus.IN_PROGRESS);
     when(sessionRepository.save(any())).thenReturn(mockSession);
     when(gameEngineGateway.createNewGame(sessionId)).thenReturn(mockGame);
 
-    SessionDTO session = sessionService.createSession();
+    SessionDto session = sessionService.createSession();
 
     assertEquals(sessionId, session.getSessionId());
     assertTrue(session.getMoves().isEmpty());
@@ -86,11 +91,11 @@ public class SessionServiceTest {
     long sessionId = 2L;
     SessionEntity mockSession = new SessionEntity()
       .setId(sessionId);
-    GameDTO mockGame = new GameDTO(sessionId, "_________", GameStatus.IN_PROGRESS);
+    GameDto mockGame = new GameDto(sessionId, "_________", GameStatus.IN_PROGRESS);
     when(sessionRepository.findById(sessionId)).thenReturn(Optional.of(mockSession));
     when(gameEngineGateway.getCurrentGameState(sessionId)).thenReturn(mockGame);
 
-    SessionDTO session = sessionService.getSession(sessionId);
+    SessionDto session = sessionService.getSession(sessionId);
 
     assertEquals(sessionId, session.getSessionId());
     assertTrue(session.getMoves().isEmpty());
@@ -115,9 +120,9 @@ public class SessionServiceTest {
     long sessionId = 3L;
     SessionEntity mockSession = new SessionEntity()
       .setId(sessionId);
-    GameDTO mockGame = new GameDTO(sessionId, "_________", GameStatus.IN_PROGRESS);
+    GameDto mockGame = new GameDto(sessionId, "_________", GameStatus.IN_PROGRESS);
     when(sessionRepository.findById(sessionId)).thenReturn(Optional.of(mockSession));
-    when(simulationProvider.getObject()).thenReturn(new GameSimulationRandom(sessionService, gameEngineGateway));
+    when(simulationProvider.getObject()).thenReturn(new GameSimulationRandom(sessionService, gameEngineGateway, gameEventPublisher));
     when(gameEngineGateway.getCurrentGameState(sessionId)).thenReturn(mockGame);
     when(gameEngineGateway.makeMove(eq(sessionId), any())).thenReturn(GameStatus.IN_PROGRESS);
 
@@ -138,9 +143,9 @@ public class SessionServiceTest {
     long sessionId = 3L;
     SessionEntity mockSession = new SessionEntity()
       .setId(sessionId);
-    GameDTO mockGame = new GameDTO(sessionId, "XX_OO____", GameStatus.IN_PROGRESS);
+    GameDto mockGame = new GameDto(sessionId, "XX_OO____", GameStatus.IN_PROGRESS);
     when(sessionRepository.findById(sessionId)).thenReturn(Optional.of(mockSession));
-    when(simulationProvider.getObject()).thenReturn(new GameSimulationRandom(sessionService, gameEngineGateway));
+    when(simulationProvider.getObject()).thenReturn(new GameSimulationRandom(sessionService, gameEngineGateway, gameEventPublisher));
     when(taskScheduler.scheduleWithFixedDelay(any(), any())).thenReturn(Mockito.mock(ScheduledFuture.class));
     when(gameEngineGateway.getCurrentGameState(sessionId)).thenReturn(mockGame);
     when(gameEngineGateway.makeMove(eq(sessionId), any())).thenReturn(GameStatus.WIN);
@@ -162,9 +167,9 @@ public class SessionServiceTest {
     long sessionId = 3L;
     SessionEntity mockSession = new SessionEntity()
       .setId(sessionId);
-    GameDTO mockGame = new GameDTO(sessionId, "XXOOOXXO_", GameStatus.IN_PROGRESS);
+    GameDto mockGame = new GameDto(sessionId, "XXOOOXXO_", GameStatus.IN_PROGRESS);
     when(sessionRepository.findById(sessionId)).thenReturn(Optional.of(mockSession));
-    when(simulationProvider.getObject()).thenReturn(new GameSimulationRandom(sessionService, gameEngineGateway));
+    when(simulationProvider.getObject()).thenReturn(new GameSimulationRandom(sessionService, gameEngineGateway, gameEventPublisher));
     when(taskScheduler.scheduleWithFixedDelay(any(), any())).thenReturn(Mockito.mock(ScheduledFuture.class));
     when(gameEngineGateway.getCurrentGameState(sessionId)).thenReturn(mockGame);
     when(gameEngineGateway.makeMove(eq(sessionId), any())).thenReturn(GameStatus.DRAW);

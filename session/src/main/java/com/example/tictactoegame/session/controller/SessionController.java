@@ -1,24 +1,22 @@
 package com.example.tictactoegame.session.controller;
 
-import com.example.tictactoegame.session.dto.SessionDTO;
+import com.example.tictactoegame.session.dto.SessionDto;
 import com.example.tictactoegame.session.service.SessionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/sessions")
+@RequiredArgsConstructor
 public class SessionController {
 
   private final SessionService sessionService;
-
-  public SessionController(SessionService sessionService) {
-    this.sessionService = sessionService;
-  }
 
   @PostMapping
   @Operation(
@@ -27,11 +25,11 @@ public class SessionController {
   )
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200", description = "Processed successfully",
-      content = {@Content(mediaType = "application/json", schema = @Schema(implementation = SessionDTO.class))}),
+      content = {@Content(mediaType = "application/json", schema = @Schema(implementation = SessionDto.class))}),
     @ApiResponse(responseCode = "400", description = "Create failed", content = @Content)
   })
   public ResponseEntity<Object> createSession() {
-    SessionDTO session = sessionService.createSession();
+    SessionDto session = sessionService.createSession();
     return ResponseEntity.ok(session);
   }
 
@@ -57,11 +55,11 @@ public class SessionController {
   )
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200", description = "Processed successfully",
-      content = {@Content(mediaType = "application/json", schema = @Schema(implementation = SessionDTO.class))}),
+      content = {@Content(mediaType = "application/json", schema = @Schema(implementation = SessionDto.class))}),
     @ApiResponse(responseCode = "404", description = "Game not found", content = @Content)
   })
   public ResponseEntity<Object> getSession(@PathVariable("sessionId") long id) {
-    SessionDTO session = sessionService.getSession(id);
+    SessionDto session = sessionService.getSession(id);
     return ResponseEntity.ok(session);
   }
 }

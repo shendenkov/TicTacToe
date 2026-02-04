@@ -10,13 +10,12 @@ import lombok.*;
 @Getter
 @EqualsAndHashCode
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class MoveDTO {
+public class MoveDto {
 
   private Player symbol;
   private int position;
 
-  public MoveDTO(MoveEntity move) {
-    this.symbol = move.getSymbol();
-    this.position = move.getPosition();
+  public static MoveDto from(MoveEntity move) {
+    return new MoveDto(move.getSymbol(), move.getPosition());
   }
 }

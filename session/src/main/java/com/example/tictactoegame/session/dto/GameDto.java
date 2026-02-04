@@ -9,7 +9,7 @@ import lombok.*;
 @Getter
 @EqualsAndHashCode
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GameDTO {
+public class GameDto {
 
   private long gameId;
   private String state;

@@ -1,7 +1,7 @@
 package com.example.tictactoegame.engine.service;
 
-import com.example.tictactoegame.engine.dto.GameDTO;
-import com.example.tictactoegame.engine.dto.MoveDTO;
+import com.example.tictactoegame.engine.dto.GameDto;
+import com.example.tictactoegame.engine.dto.MoveDto;
 import com.example.tictactoegame.engine.exception.ConflictException;
 import com.example.tictactoegame.engine.exception.NotFoundException;
 import com.example.tictactoegame.engine.model.*;
@@ -40,7 +40,7 @@ public class GameServiceTest {
     GameEntity mockGame = new GameEntity(gameId);
     when(gameRepository.save(mockGame)).thenReturn(mockGame);
 
-    GameDTO game = gameService.createGame(gameId);
+    GameDto game = gameService.createGame(gameId);
 
     assertEquals(gameId, game.getGameId());
     assertEquals(GameEntity.EMPTY_BOARD, game.getState());
@@ -69,7 +69,7 @@ public class GameServiceTest {
     GameEntity mockGame = new GameEntity(gameId);
     when(gameRepository.findById(gameId)).thenReturn(Optional.of(mockGame));
 
-    GameDTO game = gameService.getGame(gameId);
+    GameDto game = gameService.getGame(gameId);
 
     assertEquals(gameId, game.getGameId());
     assertEquals(GameEntity.EMPTY_BOARD, game.getState());
@@ -88,7 +88,7 @@ public class GameServiceTest {
   void shouldMakeMove() {
     long gameId = 3L;
     GameEntity mockGame = new GameEntity(gameId);
-    MoveDTO move = new MoveDTO(Player.X, 0);
+    MoveDto move = new MoveDto(Player.X, 0);
     when(gameRepository.findById(gameId)).thenReturn(Optional.of(mockGame));
 
     GameStatus status = gameService.makeMove(gameId, move);
@@ -102,7 +102,7 @@ public class GameServiceTest {
     GameEntity mockGame = new GameEntity(gameId)
       .setState("XX_OO____")
       .setCurrentTurn(Player.X);
-    MoveDTO move = new MoveDTO(Player.X, 2);
+    MoveDto move = new MoveDto(Player.X, 2);
     when(gameRepository.findById(gameId)).thenReturn(Optional.of(mockGame));
 
     GameStatus status = gameService.makeMove(gameId, move);
@@ -116,7 +116,7 @@ public class GameServiceTest {
     GameEntity mockGame = new GameEntity(gameId)
       .setState("XXOOOXXO_")
       .setCurrentTurn(Player.X);
-    MoveDTO move = new MoveDTO(Player.X, 8);
+    MoveDto move = new MoveDto(Player.X, 8);
     when(gameRepository.findById(gameId)).thenReturn(Optional.of(mockGame));
 
     GameStatus status = gameService.makeMove(gameId, move);
@@ -127,7 +127,7 @@ public class GameServiceTest {
   @Test
   void shouldThrowExceptionWhenGameNotFoundOnMakeMove() {
     long gameId = 3L;
-    MoveDTO move = new MoveDTO(Player.X, 0);
+    MoveDto move = new MoveDto(Player.X, 0);
     when(gameRepository.findById(gameId)).thenReturn(Optional.empty());
 
     assertThrows(NotFoundException.class, () -> gameService.makeMove(gameId, move));
@@ -141,7 +141,7 @@ public class GameServiceTest {
       .setStatus(GameStatus.WIN)
       .setWinner(Player.X)
       .setCurrentTurn(Player.X);
-    MoveDTO move = new MoveDTO(Player.O, 5);
+    MoveDto move = new MoveDto(Player.O, 5);
     when(gameRepository.findById(gameId)).thenReturn(Optional.of(mockGame));
 
     assertThrows(IllegalStateException.class, () -> gameService.makeMove(gameId, move));
@@ -153,7 +153,7 @@ public class GameServiceTest {
     GameEntity mockGame = new GameEntity(gameId)
       .setState("X________")
       .setCurrentTurn(Player.O);
-    MoveDTO move = new MoveDTO(Player.X, 1);
+    MoveDto move = new MoveDto(Player.X, 1);
     when(gameRepository.findById(gameId)).thenReturn(Optional.of(mockGame));
 
     assertThrows(IllegalArgumentException.class, () -> gameService.makeMove(gameId, move));
@@ -165,7 +165,7 @@ public class GameServiceTest {
     GameEntity mockGame = new GameEntity(gameId)
       .setState("X________")
       .setCurrentTurn(Player.O);
-    MoveDTO move = new MoveDTO(Player.O, 0);
+    MoveDto move = new MoveDto(Player.O, 0);
     when(gameRepository.findById(gameId)).thenReturn(Optional.of(mockGame));
 
     assertThrows(IllegalArgumentException.class, () -> gameService.makeMove(gameId, move));

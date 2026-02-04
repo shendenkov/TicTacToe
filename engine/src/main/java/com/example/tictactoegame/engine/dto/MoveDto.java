@@ -11,7 +11,7 @@ import lombok.*;
 @Getter
 @EqualsAndHashCode
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class MoveDTO {
+public class MoveDto {
 
   private Player symbol;
 
