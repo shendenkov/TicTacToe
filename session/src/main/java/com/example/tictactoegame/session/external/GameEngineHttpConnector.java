@@ -17,7 +17,7 @@ import org.springframework.web.client.RestClient;
   havingValue = "http",
   matchIfMissing = true
 )
-public class GameEngineHttpGateway implements GameEngineGateway {
+public class GameEngineHttpConnector implements GameEngineConnector {
 
   private final RestClient restClient = RestClient.create();
 

@@ -4,7 +4,7 @@ import com.example.tictactoegame.session.dto.GameDto;
 import com.example.tictactoegame.session.model.GameStatus;
 import com.example.tictactoegame.session.dto.MoveDto;
 
-public interface GameEngineGateway {
+public interface GameEngineConnector {
 
   GameDto createNewGame(long id);
   GameDto getCurrentGameState(long id);

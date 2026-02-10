@@ -36,3 +36,5 @@ build/
 .env.test
 engine/src/main/resources/application-local.properties
 session/src/main/resources/application-local.properties
+engine/src/main/resources/application-local.yml
+session/src/main/resources/application-local.yml

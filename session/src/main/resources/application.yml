@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: Tic-tac-toe game session service
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+server:
+  port: 8080
+springdoc:
+  swagger-ui.path: /swagger
+app:
+  cors:
+    allowed-origins: http://tictactoegame.example.com:8080,http://localhost:8080
+  engine-service:
+    protocol: http
+    host: engine-service:8081
+  simulation:
+    type: random
+    sleep-interval: 1000

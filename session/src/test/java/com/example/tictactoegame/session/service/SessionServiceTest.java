@@ -3,7 +3,7 @@ package com.example.tictactoegame.session.service;
 import com.example.tictactoegame.session.dto.GameDto;
 import com.example.tictactoegame.session.dto.SessionDto;
 import com.example.tictactoegame.session.exception.ServiceUnavailableException;
-import com.example.tictactoegame.session.external.GameEngineGateway;
+import com.example.tictactoegame.session.external.GameEngineConnector;
 import com.example.tictactoegame.session.model.*;
 import com.example.tictactoegame.session.repository.MoveRepository;
 import com.example.tictactoegame.session.repository.SessionRepository;
@@ -38,7 +38,7 @@ public class SessionServiceTest {
   private MoveRepository moveRepository;
 
   @Mock
-  private GameEngineGateway gameEngineGateway;
+  private GameEngineConnector gameEngineConnector;
 
   @Mock
   private GameEventPublisher gameEventPublisher;
@@ -54,7 +54,7 @@ public class SessionServiceTest {
 
   @BeforeEach
   void setUp() {
-    reset(sessionRepository, moveRepository, gameEngineGateway, gameEventPublisher, simulationProvider, taskScheduler);
+    reset(sessionRepository, moveRepository, gameEngineConnector, gameEventPublisher, simulationProvider, taskScheduler);
   }
 
   @Test
@@ -64,7 +64,7 @@ public class SessionServiceTest {
       .setId(sessionId);
     GameDto mockGame = new GameDto(sessionId, "_________", GameStatus.IN_PROGRESS);
     when(sessionRepository.save(any())).thenReturn(mockSession);
-    when(gameEngineGateway.createNewGame(sessionId)).thenReturn(mockGame);
+    when(gameEngineConnector.createNewGame(sessionId)).thenReturn(mockGame);
 
     SessionDto session = sessionService.createSession();
 
@@ -81,7 +81,7 @@ public class SessionServiceTest {
     SessionEntity mockSession = new SessionEntity()
       .setId(sessionId);
     when(sessionRepository.save(any())).thenReturn(mockSession);
-    when(gameEngineGateway.createNewGame(sessionId)).thenThrow(new ServiceUnavailableException(""));
+    when(gameEngineConnector.createNewGame(sessionId)).thenThrow(new ServiceUnavailableException(""));
 
     assertThrows(ServiceUnavailableException.class, () -> sessionService.createSession());
   }
@@ -93,7 +93,7 @@ public class SessionServiceTest {
       .setId(sessionId);
     GameDto mockGame = new GameDto(sessionId, "_________", GameStatus.IN_PROGRESS);
     when(sessionRepository.findById(sessionId)).thenReturn(Optional.of(mockSession));
-    when(gameEngineGateway.getCurrentGameState(sessionId)).thenReturn(mockGame);
+    when(gameEngineConnector.getCurrentGameState(sessionId)).thenReturn(mockGame);
 
     SessionDto session = sessionService.getSession(sessionId);
 
@@ -110,7 +110,7 @@ public class SessionServiceTest {
     SessionEntity mockSession = new SessionEntity()
       .setId(sessionId);
     when(sessionRepository.findById(sessionId)).thenReturn(Optional.of(mockSession));
-    when(gameEngineGateway.getCurrentGameState(sessionId)).thenThrow(new ServiceUnavailableException(""));
+    when(gameEngineConnector.getCurrentGameState(sessionId)).thenThrow(new ServiceUnavailableException(""));
 
     assertThrows(ServiceUnavailableException.class, () -> sessionService.getSession(sessionId));
   }
@@ -122,9 +122,9 @@ public class SessionServiceTest {
       .setId(sessionId);
     GameDto mockGame = new GameDto(sessionId, "_________", GameStatus.IN_PROGRESS);
     when(sessionRepository.findById(sessionId)).thenReturn(Optional.of(mockSession));
-    when(simulationProvider.getObject()).thenReturn(new GameSimulationRandom(sessionService, gameEngineGateway, gameEventPublisher));
-    when(gameEngineGateway.getCurrentGameState(sessionId)).thenReturn(mockGame);
-    when(gameEngineGateway.makeMove(eq(sessionId), any())).thenReturn(GameStatus.IN_PROGRESS);
+    when(simulationProvider.getObject()).thenReturn(new GameSimulationRandom(sessionService, gameEngineConnector, gameEventPublisher));
+    when(gameEngineConnector.getCurrentGameState(sessionId)).thenReturn(mockGame);
+    when(gameEngineConnector.makeMove(eq(sessionId), any())).thenReturn(GameStatus.IN_PROGRESS);
 
     sessionService.startGame(sessionId);
 
@@ -145,10 +145,10 @@ public class SessionServiceTest {
       .setId(sessionId);
     GameDto mockGame = new GameDto(sessionId, "XX_OO____", GameStatus.IN_PROGRESS);
     when(sessionRepository.findById(sessionId)).thenReturn(Optional.of(mockSession));
-    when(simulationProvider.getObject()).thenReturn(new GameSimulationRandom(sessionService, gameEngineGateway, gameEventPublisher));
+    when(simulationProvider.getObject()).thenReturn(new GameSimulationRandom(sessionService, gameEngineConnector, gameEventPublisher));
     when(taskScheduler.scheduleWithFixedDelay(any(), any())).thenReturn(Mockito.mock(ScheduledFuture.class));
-    when(gameEngineGateway.getCurrentGameState(sessionId)).thenReturn(mockGame);
-    when(gameEngineGateway.makeMove(eq(sessionId), any())).thenReturn(GameStatus.WIN);
+    when(gameEngineConnector.getCurrentGameState(sessionId)).thenReturn(mockGame);
+    when(gameEngineConnector.makeMove(eq(sessionId), any())).thenReturn(GameStatus.WIN);
 
     sessionService.startGame(sessionId);
 
@@ -169,10 +169,10 @@ public class SessionServiceTest {
       .setId(sessionId);
     GameDto mockGame = new GameDto(sessionId, "XXOOOXXO_", GameStatus.IN_PROGRESS);
     when(sessionRepository.findById(sessionId)).thenReturn(Optional.of(mockSession));
-    when(simulationProvider.getObject()).thenReturn(new GameSimulationRandom(sessionService, gameEngineGateway, gameEventPublisher));
+    when(simulationProvider.getObject()).thenReturn(new GameSimulationRandom(sessionService, gameEngineConnector, gameEventPublisher));
     when(taskScheduler.scheduleWithFixedDelay(any(), any())).thenReturn(Mockito.mock(ScheduledFuture.class));
-    when(gameEngineGateway.getCurrentGameState(sessionId)).thenReturn(mockGame);
-    when(gameEngineGateway.makeMove(eq(sessionId), any())).thenReturn(GameStatus.DRAW);
+    when(gameEngineConnector.getCurrentGameState(sessionId)).thenReturn(mockGame);
+    when(gameEngineConnector.makeMove(eq(sessionId), any())).thenReturn(GameStatus.DRAW);
 
     sessionService.startGame(sessionId);
 

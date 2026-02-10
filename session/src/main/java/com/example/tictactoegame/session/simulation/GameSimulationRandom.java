@@ -3,7 +3,7 @@ package com.example.tictactoegame.session.simulation;
 import com.example.tictactoegame.session.dto.GameDto;
 import com.example.tictactoegame.session.dto.MoveDto;
 import com.example.tictactoegame.session.dto.SessionDto;
-import com.example.tictactoegame.session.external.GameEngineGateway;
+import com.example.tictactoegame.session.external.GameEngineConnector;
 import com.example.tictactoegame.session.model.GameStatus;
 import com.example.tictactoegame.session.model.Player;
 import com.example.tictactoegame.session.model.SessionEntity;
@@ -22,7 +22,7 @@ public class GameSimulationRandom implements GameSimulation {
   public static char EMPTY_CELL = '_';
 
   private final SessionService sessionService;
-  private final GameEngineGateway gameEngineGateway;
+  private final GameEngineConnector gameEngineConnector;
   private final GameEventPublisher gameEventPublisher;
 
   @Setter
@@ -37,7 +37,7 @@ public class GameSimulationRandom implements GameSimulation {
 
   @Override
   public void run() {
-    GameDto game = gameEngineGateway.getCurrentGameState(session.getId());
+    GameDto game = gameEngineConnector.getCurrentGameState(session.getId());
     status = game.getStatus();
     if (GameStatus.isFinished(status)) {
       thisTask.cancel(false);
@@ -50,10 +50,10 @@ public class GameSimulationRandom implements GameSimulation {
     }
 
     MoveDto move = new MoveDto(player, position);
-    status = gameEngineGateway.makeMove(game.getGameId(), move);
+    status = gameEngineConnector.makeMove(game.getGameId(), move);
     sessionService.saveMove(session, move);
 
-    game = gameEngineGateway.getCurrentGameState(session.getId());
+    game = gameEngineConnector.getCurrentGameState(session.getId());
     gameEventPublisher.publish(String.valueOf(session.getId()), SessionDto.from(session, game));
 
     if (GameStatus.isFinished(status)) {

@@ -4,7 +4,7 @@ import com.example.tictactoegame.session.dto.GameDto;
 import com.example.tictactoegame.session.dto.MoveDto;
 import com.example.tictactoegame.session.dto.SessionDto;
 import com.example.tictactoegame.session.exception.NotFoundException;
-import com.example.tictactoegame.session.external.GameEngineGateway;
+import com.example.tictactoegame.session.external.GameEngineConnector;
 import com.example.tictactoegame.session.model.MoveEntity;
 import com.example.tictactoegame.session.model.SessionEntity;
 import com.example.tictactoegame.session.repository.MoveRepository;
@@ -26,7 +26,7 @@ public class SessionService {
 
   private final SessionRepository sessionRepository;
   private final MoveRepository moveRepository;
-  private final GameEngineGateway gameEngineGateway;
+  private final GameEngineConnector gameEngineConnector;
   private final ObjectProvider<GameSimulation> simulationProvider;
   private final TaskScheduler taskScheduler;
 
@@ -37,7 +37,7 @@ public class SessionService {
   public SessionDto createSession() {
     SessionEntity session = sessionRepository.save(new SessionEntity());
 
-    GameDto game = gameEngineGateway.createNewGame(session.getId());
+    GameDto game = gameEngineConnector.createNewGame(session.getId());
 
     return SessionDto.from(session, game);
   }
@@ -46,7 +46,7 @@ public class SessionService {
   public SessionDto getSession(long id) {
     SessionEntity session = getSessionEntity(id);
 
-    GameDto game = gameEngineGateway.getCurrentGameState(id);
+    GameDto game = gameEngineConnector.getCurrentGameState(id);
 
     return SessionDto.from(session, game);
   }
