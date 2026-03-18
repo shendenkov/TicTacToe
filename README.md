@@ -131,4 +131,4 @@ TODO:
 - add Eureka discovery service
 - add SpringCloud OpenFeign to change hardcoded internal urls
 - add application stop hooks
-- add log4j logging
+- add Logback logging
